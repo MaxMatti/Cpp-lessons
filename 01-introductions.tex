@@ -1,0 +1,55 @@
+\input{definitions}
+
+\begin{document}
+
+\title{Introduction}
+\subtitle{Compilers, IDEs, Hello World}
+\date{\today}
+\author{Florian Warg, Max Staff}
+
+\maketitle
+
+\begin{frame}[fragile]
+    \frametitle{Compilers}
+    \begin{tabular}{lllccc}
+        \textbf{Name} & \textbf{OS} & \textbf{License} & \textbf{C++11} & \textbf{C++14} & \textbf{C++17} \\
+        Intel & Most & Proprietary & Partial & Partial & No \\
+        MS Visual C++ & Most & Proprietary & Yes & Partial & Partial \\
+        Clang & All & MIT-like & Yes & Yes & Partial \\
+        GCC & All\footnote{Using external software for Windows} & GPLv3 & Yes & Yes & Partial \\
+    \end{tabular} \bigskip
+    \href{https://en.wikipedia.org/wiki/List_of_compilers#C.2B.2B_compilers}{Source}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{IDEs}
+    \begin{tabular}{lllcc}
+        \textbf{Name} & \textbf{OS} & \textbf{License} & \textbf{Autocomplete} & \textbf{Tools} \\
+        Visual Studio & Windows & Proprietary & Complex & Most\footnote{GUI builder, class browser, toolchain, debugger, profiler, refactoring, code coverage} \\
+        Eclipse CDT & Java & EPL & Complex & Most\footnotemark[\value{footnote}] \\
+        Xcode & OS X & Proprietary & Complex & Most\footnotemark[\value{footnote}] \\
+        CLion & Java & Proprietary & Complex & Many\footnote{Except for code coverage, GUI builder, profiler} \\
+        Qt Creator & All & LGPL & Complex & Many\footnote{Except for code coverage} \\
+        Geany & All & GPL & Simple & \footnotesize{Class Browser} \\
+    \end{tabular} \bigskip
+    \href{https://en.wikipedia.org/wiki/Comparison_of_integrated_development_environments#C.2FC.2B.2B}{Source}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Hello World}
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello World!\n";
+    return 0;
+}
+\end{lstlisting}
+Compile with:
+\begin{lstlisting}[numbers=none]
+g++ -std=c++14 -Wall -Wextra hello_world.cc
+\end{lstlisting}
+\end{frame}
+
+\end{document}

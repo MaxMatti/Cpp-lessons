@@ -1,0 +1,23 @@
+\documentclass[10pt, compress, usenames, dvipsnames]{beamer}
+
+\usetheme{m}
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+\usepackage{minted}
+\usepackage{listings}
+\usepackage{scrextend}
+
+% set the default code style
+\lstset{
+    frame=tb, % draw a frame at the top and bottom of the code block
+    tabsize=4, % tab space width
+    showstringspaces=false, % don't mark spaces in strings
+    numbers=left, % display line numbers on the left
+    commentstyle=\color{OliveGreen}, % comment color
+    keywordstyle=\color{MidnightBlue}, % keyword color
+    stringstyle=\color{WildStrawberry}, % string color
+	language=C++,
+	basicstyle=\ttfamily
+}
+
+\usemintedstyle{trac}

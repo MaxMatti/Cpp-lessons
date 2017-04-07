@@ -1,0 +1,91 @@
+\documentclass[10pt, compress, usenames, dvipsnames]{beamer}
+
+\usetheme{m}
+
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+\usepackage{minted}
+\usepackage{listings}
+
+% set the default code style
+\lstset{
+    frame=tb, % draw a frame at the top and bottom of the code block
+    tabsize=4, % tab space width
+    showstringspaces=false, % don't mark spaces in strings
+    numbers=left, % display line numbers on the left
+    commentstyle=\color{OliveGreen}, % comment color
+    keywordstyle=\color{MidnightBlue}, % keyword color
+    stringstyle=\color{WildStrawberry} % string color
+}
+
+
+
+\usemintedstyle{trac}
+
+\title{Programming with C++}
+\subtitle{Getting started}
+\date{\today}
+\author{Florian Warg}
+\institute{Institute or miscellaneous information}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}[fragile]
+    \frametitle{whoami}
+    \begin{itemize}
+    \item CS student, 6th semester
+    \item systems programming
+    \item programming paradigms
+    \item code design principles
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Course Requirements}
+    \begin{itemize}
+    \item understanding of
+        \begin{itemize}
+            \item fundamental data types and operations
+            \item primitive memory management
+            \item basic algorithms and data structures
+        \end{itemize}    
+    \item some experience with object-oriented programming
+    \item basic knowledge of version control and build automation
+    \item experience with programming in C
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Hello World!}
+    \begin{itemize}
+        \item this is how we wrote it in basic C
+    \end{itemize}
+    \begin{lstlisting}[language=C++,basicstyle=\ttfamily]
+#include <stdio.h>
+int main(void) {
+    printf("Hello World!\n");
+}
+    \end{lstlisting}
+    \begin{itemize}
+        \item this is the new C++ version
+    \end{itemize}
+    \begin{lstlisting}[language=C++,basicstyle=\ttfamily]
+#include <iostream>
+int main() {
+    std::cout << "Hello World!\n";
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Differences}
+    \begin{itemize}
+        \item header files are not required to have a file extension
+        \item no more implicit ellipses!
+        \item printing text does not look like a function call at first sight
+    \end{itemize}
+\end{frame}
+
+\end{document}
