@@ -42,13 +42,62 @@
 using namespace std;
 
 int main() {
-    cout << "Hello World!\n";
+    cout << "Hello World!" << endl;
     return 0;
 }
 \end{lstlisting}
 Compile with:
 \begin{lstlisting}[numbers=none]
-g++ -std=c++14 -Wall -Wextra hello_world.cc
+g++ -std=c++14 -Wall -Wextra hello_world.cpp
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Reading Input}
+\begin{lstlisting}
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    cout << "Please enter your name: ";
+    string name;
+    cin >> name;
+    cout << "Hello " << name << "!" << endl;
+    return 0;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Data types}
+\begin{lstlisting}
+// string
+string a = "abcde";
+char b = a[4];
+char c;
+c = 'e';
+
+// integer
+int d = 42;
+
+// float
+float e = 13.37;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{More Data types}
+\begin{lstlisting}
+// similar to int
+short f = 5;
+long g = 58123745931245832458L;
+
+// similar to double
+double h = 123456789.123456789;
+
+// int again...
+unsigned int i = 1337U;
 \end{lstlisting}
 \end{frame}
 
