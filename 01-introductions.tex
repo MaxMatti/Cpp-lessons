@@ -37,36 +37,16 @@
 
 \begin{frame}[fragile]
     \frametitle{Hello World}
-\begin{lstlisting}
-#include <iostream>
-using namespace std;
-
-int main() {
-    cout << "Hello World!\n";
-    return 0;
-}
-\end{lstlisting}
-Compile with:
-\begin{lstlisting}[numbers=none]
+    \lstinputlisting{examples/01-hello-world.cpp}
+    Compile with:
+    \begin{lstlisting}[numbers=none]
 g++ -std=c++14 -Wall -Wextra hello_world.cpp
-\end{lstlisting}
+    \end{lstlisting} %% what about -pedantic ? Makes the line too long.
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{Reading Input}
-\begin{lstlisting}
-#include <iostream>
-#include <string>
-using namespace std;
-
-int main() {
-    cout << "Please enter your name: ";
-    string name;
-    cin >> name;
-    cout << "Hello " << name << "!\n";
-    return 0;
-}
-\end{lstlisting}
+    \lstinputlisting{examples/02-hello-user.cpp}
 \end{frame}
 
 \begin{frame}[fragile]
