@@ -54,6 +54,11 @@ g++ -std=c++14 -Wall -Wextra hello_world.cpp
 \end{frame}
 
 \begin{frame}[fragile]
+    \frametitle{Formatting Output}
+    \lstinputlisting{examples/03-iomanip.cpp}
+\end{frame}
+
+\begin{frame}[fragile]
     \frametitle{Data types}
 \begin{lstlisting}
 // string
@@ -64,9 +69,11 @@ c = 'e';
 
 // integer
 int d = 42;
+int e, f = 12;
+// what's the value of e?
 
 // float
-float e = 13.37;
+float g = 13.37;
 \end{lstlisting}
 \end{frame}
 
@@ -82,6 +89,184 @@ double h = 123456789.123456789;
 
 // int again...
 unsigned int i = 1337U;
+
+// and to interpret conditions
+bool a = false;
+bool b;
+b = !a;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Operations - Integer}
+\begin{lstlisting}
+// basic maths
+int a = 12,
+    b = 15;
+
+int c = a + b;
+c += b;
+
+d = a - b;
+d -= a * b;
+e *= d;
+
+f = a + b / b;
+f /= c;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Operations - Integer}
+\begin{lstlisting}
+// basic programming tools
+int a = 12,
+    b = 15;
+
+int c = b % a;
+int d = a++;
+int e = ++a;
+
+--d;
+e--;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Operations - Integer}
+    \lstinputlisting{examples/04-simple-maths.cpp}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Operations - Strings and Characters}
+\begin{lstlisting}
+// concatenation
+string a = "Hello ",
+    b = "World!";
+string c = a + b;
+string d = "Hello" "World!";
+
+// characters
+char e = 'e';
+char f = e + 1;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Operations - Comparison}
+\begin{lstlisting}
+bool a = true, b = false;
+bool c = a == b;
+
+if (a != b) {
+    bool d = a > b;
+    d = !(a <= b);
+}
+
+bool e = a && b;
+bool f = a || b;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Operations - Bitwise}
+\begin{lstlisting}
+int a = 12, b = 6;
+
+int c = a & b;
+int d = a | b;
+
+int e = ~a;
+
+int f = a ^ b;
+
+int g = a << b;
+int h = a >> b;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Compound Operators}
+\begin{lstlisting}
+int a = 12, b = 6;
+
+a += b; a += b;
+a *= b; a /= b;
+
+a %= b;
+
+a &= b;
+a |= b;
+
+a ^= b;
+
+a <<= b;
+a >>= b;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Operator Precedence}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Loops}
+\begin{lstlisting}
+int amount = 5;
+string text = "test";
+
+while (amount > 0) {
+    cout << text << "\n";
+    --amount;
+}
+
+for (int i = 0; i < amount; ++i) {
+    cout << text << "\n";
+}
+
+for (auto i : text) {
+    cout << i << "\n";
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Loops}
+\begin{lstlisting}
+int amount = 200;
+string text = "test";
+string longer_text = "";
+
+while (amount > 0) {
+    longer_text += text;
+    if (longer_text.size() > 100) {
+        continue;
+    }
+    if (longer_text.size() > 120) {
+        break;
+    }
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Functions}
+\begin{lstlisting}
+void myPrint(string parameter) {
+    cout << parameter << "\n";
+}
+
+int triangleArea(int sideA, int sideB) {
+    return sideA * sideB / 2;
+}
+
+int faculty(int nr) {
+    if (nr > 0) {
+        return nr * faculty(nr - 1);
+    } else {
+        return 0;
+    }
+}
 \end{lstlisting}
 \end{frame}
 
