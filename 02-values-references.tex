@@ -1,0 +1,131 @@
+\input{definitions}
+
+\begin{document}
+
+\title{Values and References}
+\subtitle{tbd}
+\date{\today}
+\author{Florian Warg, Max Staff}
+
+\maketitle
+
+\begin{frame}[fragile]
+    \frametitle{What are values?}
+    \begin{itemize}
+        \item values are expressions in a normal form
+        \item cannot be reduced or evaluated any further
+        \begin{lstlisting}[numbers=none]
+1 + 2 // not a value (can be reduced)
+3     // value (in normal form)
+        \end{lstlisting}
+        \item variables can hold values
+        \item value is independent from its location
+        \begin{lstlisting}[numbers=none]
+int x = 2, y = 4, z = 4;
+x + y == x + z // 2 + 4 == 2 + 4
+        \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Lvalues}
+    \begin{itemize}
+        \item lvalues are expressions which can be used on the left side of an assignment operation
+        \item i.e. an lvalue has a memory address
+        \begin{lstlisting}[numbers=none]
+int x = 1; // x holds value 1
+x = 2;     // x is lvalue
+&x;        // might give us the lvalue 0xFA02E1
+2 = x;     // compiler error: 2 is not an lvalue
+        \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Rvalues}
+    \begin{itemize}
+        \item rvalues are non-lvalues or temporary lvalues
+        \item can only be used on the right side of an assignment operation
+        \item temporary variables and literals are rvalues
+        \item non-temporary variables hold lvalues and rvalues
+        \begin{lstlisting}[numbers=none]
+int x = 2; // non-temporary variable x
+&x;        // address of x is its lvalue
+x;         // 2 is rvalue of x
+        \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{References}
+    \begin{itemize}
+        \item a reference is an alias for an existing value
+        \item there are references for lvalues and rvalues
+        \item references are not necessarily objects
+        \item i.e. there are no pointers, arrays or references to references
+        \item give access to a variable without copying its value
+        \item allow modification of local variables in other scopes
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Lvalue references}
+    \begin{itemize}
+        \item alias which refers to an lvalue
+        \begin{lstlisting}
+int x = 42;
+int& lx = x; // create lvalue reference to x
+++lx;        // use alias instead of x
+cout << x;   // what is printed here?
+        \end{lstlisting}
+        \item functions taking lvalue references can modify local variables
+        \begin{lstlisting}
+void add2(int& ref) { ref += 2; }
+int x = 10;
+add2(x); // ref is initialized with x
+cout << x;
+        \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Rvalue references}
+    \begin{itemize}
+        \item alias which refers to an rvalue
+        \begin{lstlisting}
+string&& sr = "Hello";  // create temporary
+cout << sr;
+        \end{lstlisting}
+        \item used to implement move semantics and perfect forwarding
+        \item move temporaries into function instead of copying their values
+        \begin{lstlisting}
+void sinkStr(string&& tmp) { cout << tmp; }
+sinkStr("Hello World!");
+        \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Pointers}
+    \begin{itemize}
+        \item pointers are data types that hold addresses as their values
+        \item can be dereferenced: interpret data at address as value
+        \item can be used for pointer arithmetics
+        \begin{lstlisting}
+int x = 42;
+int* px = &x; // px holds lvalue (address) of x
+cout << px;   // print address
+*px = 43;     // set content of variable at &x
+cout << *px   // print 43 (value of x)
+        \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Pointer arithmetics}
+    \begin{itemize}
+        \item
+    \end{itemize}
+\end{frame}
+
+\end{document}

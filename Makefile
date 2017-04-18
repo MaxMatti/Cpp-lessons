@@ -1,4 +1,4 @@
-SRC = 01-introductions.tex
+SRC = 01-introductions.tex 02-values-references.tex
 OBJ = $(SRC:.tex=.aux) $(SRC:.tex=.log) $(SRC:.tex=.out) $(SRC:.tex=.vrb) $(SRC:.tex=.nav) $(SRC:.tex=.snm) $(SRC:.tex=.toc)
 
 all:
