@@ -3,7 +3,7 @@
 \begin{document}
 
 \title{Values and References}
-\subtitle{tbd}
+\subtitle{Russian Roulette with Memory}
 \date{\today}
 \author{Florian Warg, Max Staff}
 
@@ -117,6 +117,9 @@ int* px = &x; // px holds lvalue (address) of x
 cout << px;   // print address
 *px = 43;     // set content of variable at &x
 cout << *px   // print 43 (value of x)
+struct { int x; } t, *pt = &t;
+(*pt).x = 1;  // dereference then access member
+pt->x = 2;    // preferred shortcut
         \end{lstlisting}
     \end{itemize}
 \end{frame}
@@ -158,5 +161,81 @@ if (np && *np) { cout << *np; } // no error.
         \end{lstlisting}
     \end{itemize}
 \end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Value semantics}
+    \begin{itemize}
+        \item programming style that focuses on values stored in objects
+        \item identity of objects is irrelevant
+        \item default behavior of C++
+        \item mathematical approach
+        \item easy to use
+        \item no reference aliasing problems: cannot implicitly modify a variable
+        \item can be highly optimized with move semantics, copy elision, etc.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Value semantics: example}
+        \begin{lstlisting}
+struct Member { string s; };
+struct Host { Member m; };
+/* ... */
+Host host;
+Member member;
+member.s = "Hello";
+host.m = member;
+cout << host.m.s; // print "Hello"
+member.s = "World";
+cout << host.m.s; // print "Hello"
+        \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Reference semantics}
+    \begin{itemize}
+        \item programming style that focuses on object identity
+        \item can be accomplished in C++ with references and pointers
+        \item object-oriented approach (default behavior of Java)
+        \item allows different parties to modify objects
+        \item reference aliasing problems can occur
+        \item in OOP copying references is usually cheaper than copying values
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Reference semantics: example}
+        \begin{lstlisting}
+struct Member { string s; };
+struct Host { Member* m; };
+/* ... */
+Host host;
+Member member;
+member.s = "Hello";
+host.m = &member;
+cout << host.m->s; // print "Hello"
+member.s = "World";
+cout << host.m->s; // print "World"
+        \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Call by value / reference}
+        \begin{lstlisting}
+void val(int x)  { ++x;  }
+void ref(int& x) { ++x;  }
+void ptr(int* x) { ++*x; }
+/* ... */
+int i = 0;
+cout << i; // print 0
+val(i);
+cout << i; // print 0
+ref(i);
+cout << i; // print 1
+ptr(&i);
+cout << i; // print 2
+        \end{lstlisting}
+\end{frame}
+
 
 \end{document}
