@@ -124,7 +124,38 @@ cout << *px   // print 43 (value of x)
 \begin{frame}[fragile]
     \frametitle{Pointer arithmetics}
     \begin{itemize}
-        \item
+        \item addresses are basically numbers
+        \item for T* offsets are relative to sizeof(T)
+        \item can be used for low level programming and arrays
+        \begin{lstlisting}
+int arr[12];  // &arr[0] == 0xDEAD0000
+int* p = arr; // p = &arr[0]
+p + 1;        // 0xDEAD004 with sizeof(int) = 4
+p + 3;        // 0xDEAD00C
+*p = 1;       // arr[0] = 1
+*(p + 1) = 2; // arr[1] = 2
+p[11] = 12;   // arr[11] = 12
+        \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Nullpointer}
+    \begin{itemize}
+        \item a pointer that holds address 0x00 is a nullpointer
+        \item C++ has special value called nullptr 
+        \item \textbf{never use NULL or 0 instead of nullptr}
+        \item dereferencing nullptr is undefined behavior (usually segfault)
+        \item testing for nullptr is important
+        \begin{lstlisting}
+int x = 12;
+int* p = &x;
+int* np = nullptr;
+if (p != nullptr) { cout << "not null"; }
+if (!np) { cout << "null"; }
+if (p && *p) { cout << *p; }
+if (np && *np) { cout << *np; } // no error.
+        \end{lstlisting}
     \end{itemize}
 \end{frame}
 
