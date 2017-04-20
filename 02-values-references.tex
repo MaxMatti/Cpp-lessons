@@ -30,28 +30,31 @@ x + y == x + z // 2 + 4 == 2 + 4
 \begin{frame}[fragile]
     \frametitle{Lvalues}
     \begin{itemize}
-        \item lvalues are expressions which can be used on the left side of an assignment operation
+        \item lvalues are expressions which can be used on the left side of an assignment operation (and also the right side)
         \item i.e. an lvalue has a memory address
         \begin{lstlisting}[numbers=none]
-int x = 1; // x holds value 1
+int x = 1; // x is evaluated to 1
 x = 2;     // x is lvalue
-&x;        // might give us the lvalue 0xFA02E1
 2 = x;     // compiler error: 2 is not an lvalue
+int y = x; // both x and y are lvalues
         \end{lstlisting}
+        \item lvalues persist beyond a single expression
     \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{Rvalues}
     \begin{itemize}
-        \item rvalues are non-lvalues or temporary lvalues
+        \item rvalues are non-lvalues
         \item can only be used on the right side of an assignment operation
-        \item temporary variables and literals are rvalues
-        \item non-temporary variables hold lvalues and rvalues
+        \item e.g. temporary variables, literals, addresses are rvalues
         \begin{lstlisting}[numbers=none]
-int x = 2; // non-temporary variable x
-&x;        // address of x is its lvalue
-x;         // 2 is rvalue of x
+/* temporaries and literals*/
+"rvalue"; 
+2;
+41 + 4;
+/* not rvalues */
+int x = 1, y = x; // x is lvalue, not rvalue
         \end{lstlisting}
     \end{itemize}
 \end{frame}
