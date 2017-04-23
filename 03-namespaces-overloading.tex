@@ -1,0 +1,137 @@
+\input{definitions}
+
+\begin{document}
+
+\title{Namespaces and Function overloading}
+\subtitle{Name collisions and how to avoid them}
+\date{\today}
+\author{Florian Warg, Max Staff}
+
+\maketitle
+
+\begin{frame}[fragile]
+    \frametitle{Name collisions}
+    \begin{itemize}
+        \item a project uses libraries A and B
+        \item A and B offer functions with similar names and arguments
+        \begin{lstlisting}[numbers=none]
+/* Library A */
+digest hash(block input) { return md5(input); }
+/* Library B */
+digest hash(block input) { return sha1(input); }
+/* User code */
+hash(my_message);
+        \end{lstlisting}
+        \item the compiler cannot deduce which function you want to call
+        \item this is called a name collision
+        \item it will cause a compiler error
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Namespaces}
+    \begin{itemize}
+        \item libraries use namespaces to avoid name collisions 
+        \item namespaces can contain functions, types and objects
+        \item symbols can be accessed with ns::symbol
+        \begin{lstlisting}[numbers=none]
+namespace LibA {
+    digest hash(block input);
+}
+namespace LibB {
+    digest hash(block input);
+}
+/* call hash from Lib A */
+LibA::hash(my_message);
+/* call hash from Lib B */
+LibB::hash(my_message);
+        \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Nested namespaces}
+    \begin{itemize}
+        \item namespaces can also contain other namespaces
+        \item this can be used to organize software into packages
+        \begin{lstlisting}[numbers=none]
+namespace Lib {
+    namespace crypto {
+        digest hash(block input) { ... }
+    }
+}
+Lib::crypto::hash(my_message);
+        \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Split namespaces}
+    \begin{itemize}
+        \item namespaces can be opened and closed at any point
+        \item symbols inside the same namespace are visible to each other
+        \begin{lstlisting}[numbers=none]
+namespace A {
+    int x;
+} /* namespace A */
+
+namespace A {
+    int y;
+} /* namespace A */
+        \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Import symbols}
+    \begin{itemize}
+        \item symbols can be imported into the local namespace
+        \item achieved with a "using directive"
+        \begin{lstlisting}
+#include <string>
+using std::string;
+int main() {
+    std::string s1;
+    string s1; // imported std::string as string
+}
+        \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Import namespaces}
+    \begin{itemize}
+        \item whole namespaces can be imported, too
+        \item this will import all symbols
+        \begin{lstlisting}
+#include <iostream>
+#include <string>
+using namespace std;
+int main() {
+    string name; // std::string
+    cin >> name; // std::cin
+    cout << "Hello, " << name << "\n";
+}
+        \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Best practice}
+    \begin{itemize}
+        \item global namespace should have as few symbols as possible
+        \item never import symbols in header files
+        \item full symbol name is easier to understand in code reviews
+        \item import single symbols rather than namespaces
+        \item in production code almost always use full names
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Function overloading}
+    \begin{itemize}
+        \item 
+    \end{itemize}
+\end{frame}
+
+\end{document}
