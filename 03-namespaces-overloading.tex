@@ -156,9 +156,9 @@ int b = a; // Error?
 \begin{frame}[fragile]
     \frametitle{Function Overloading}
     \begin{itemize}
-        \item two functions to achieve the same goal for different datatypes
-        \item example: outputting to std::cout
-        \item optional parameters with default values
+        \item two functions to achieve the same goal for different arguments
+        \item example: outputting to command line with std::cout
+        \item what about optional parameters with default values?
     \end{itemize}
 \end{frame}
 
@@ -211,6 +211,202 @@ round(5.7);
 round(4.222, 0.1);
 round(355);
 round(12345, 10);
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Conclusions}
+    \begin{itemize}
+        \item in C++ not only the function name is relevant
+        \item compiler also checks arguments and return type
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Classes}
+    \begin{itemize}
+        \item having functions for own datatype assigned to it would improve readability of code
+        \item what about OOP? About private and public? And all those more or less complicated design patterns?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Class declarations}
+    \begin{lstlisting}
+class Rectangle {
+    int width, height;
+public:
+    int area();
+}
+
+int Rectangle::area() {
+    return this->width * height;
+}
+
+Rectangle a;
+a.area();
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Constructors}
+    \begin{lstlisting}
+class Rectangle {
+    int width, height;
+public:
+    Rectangle();
+    int area();
+}
+
+Rectangle::Rectangle() {
+    this->width = 0;
+    this->height = 0;
+}
+
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Constructors}
+    \begin{lstlisting}
+class Rectangle {
+    int width, height;
+public:
+    Rectangle(int a, int b);
+    int area();
+}
+
+Rectangle::Rectangle(int width, int height) {
+    this->width = width;
+    this->height = height;
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Constructors}
+    \begin{lstlisting}
+class Rectangle {
+    int width, height;
+public:
+    Rectangle(int a, int b);
+    int area();
+}
+
+int Rectangle::area() { return this->width * height; }
+
+Rectangle::Rectangle(int a, int b) :
+    width(a), height(b) {}
+
+Rectangle a;
+a.area();
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{RAII}
+    \begin{itemize}
+        \item Constructor gets called on declaration!
+        \item keyword new creates object on heap
+        \begin{itemize}
+            \item needs to be freed later with delete!
+            \item item does not get deleted when going out of scope
+        \end{itemize}
+        \item benefits: can't forget to call constructor
+        \item also we can use destructors now
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Destructors}
+    \begin{lstlisting}
+class Rectangle {
+    int width, height;
+    FILE* secretLogForNSA;
+public:
+    Rectangle();
+    ~Rectangle();
+}
+
+Rectangle::Rectangle() {
+    secretLogForNSA = fopen("log.txt", "wa");
+}
+
+Rectangle::~Rectangle() {
+    fclose(secretLogForNSA);
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Inheritance}
+    \begin{lstlisting}
+class A {
+public: int data;
+private: int privateData;
+}
+
+class B : public A {
+public: int metaData;
+}
+
+class C : private A {
+public: int otherData;
+}
+
+A a; a.data;
+B b; b.data;
+C c; c.data;
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Multiple Inheritances}
+    \begin{lstlisting}
+class A {
+public: int data;
+}
+
+class B {
+public: int metaData;
+}
+
+class C : private A, public B {
+public: int otherData;
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Friends}
+    \begin{lstlisting}
+class B;
+
+class A {
+friend B;
+private: int data;
+}
+
+class B {
+private:
+    int metaData;
+    A other;
+public:
+    int data() { return this->other.data; }
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{New and Delete}
+    \begin{lstlisting}
+class A {
+private: int data;
+}
+
+// put object of type A in heap:
+A* a = new A();
+delete a;
     \end{lstlisting}
 \end{frame}
 
