@@ -129,6 +129,17 @@ int main() {
 
 \begin{frame}[fragile]
     \frametitle{Scopes}
+    \begin{itemize}
+        \item each name in C++ has restricted validity (function, namespace)
+        \item a scope is the portion of source code where a certain name (e.g. variable) is present
+        \item begins at declaration
+        \item ends at closing curly brace
+        \item what about custom scopes?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Block Scope}
     \begin{lstlisting}
 int main() {
     int a = 0; ++a;
@@ -140,16 +151,67 @@ int main() {
 }
 int b = a; // Error?
     \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Function Overloading}
     \begin{itemize}
-        \item 
+        \item two functions to achieve the same goal for different datatypes
+        \item example: outputting to std::cout
+        \item optional parameters with default values
     \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Function overloading}
-    \begin{itemize}
-        \item 
-    \end{itemize}
+    \frametitle{Default Arguments}
+    \begin{lstlisting}
+float round(float a, float b = 1) {
+    return a - (a % b);
+}
+
+round(10.5);
+round(11.3579, 0.1);
+round(12345f, 10f);
+
+// this is incorrect:
+float round(float b = 1, float a) {
+    return a - (a % b);
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Different amount of Arguments}
+    \begin{lstlisting}
+float distance(float a, float b) {
+    return std::sqrt(a*a + b*b);
+}
+
+float distance(float a, float b, float c) {
+    return std::sqrt(a*a + b*b + c*c);
+}
+
+distance(5, 3);
+distance(5, 3, 7);
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Different type of Arguments}
+    \begin{lstlisting}
+float round(float a, float b = 1) {
+    return a - (a % b);
+}
+
+int round(int a, int b = 1) {
+    return a - (a % b);
+}
+
+round(5.7);
+round(4.222, 0.1);
+round(355);
+round(12345, 10);
+    \end{lstlisting}
 \end{frame}
 
 \end{document}
