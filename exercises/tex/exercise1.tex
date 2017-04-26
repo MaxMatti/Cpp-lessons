@@ -1,0 +1,58 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{a4wide}
+\usepackage{DejaVuSans}
+\usepackage{listings}
+\usepackage{courier}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\renewcommand*\familydefault{\sfdefault} 
+\lstset{basicstyle=\ttfamily}
+\begin{document}
+\section*{Programming 101}
+\begin{enumerate}
+    \item Write a program that prints "Hello World" and a newline character to stdout. Use the object \lstinline{std::cout} from the header \lstinline{iostream}.
+    \item Use local variables of types \lstinline{std::string} and \lstinline{int} to ask the user for their name and age. Now that you know this data, greet the user back. (You need to include the header \lstinline{string})
+    \item Ask the user for 2 integers - width and height of a rectangle. Use \lstinline{std::cout} to print the area in a specific format. The number should always take up at least 3 characters. Fill with zeroes if needed. Example: 3 becomes 003. (Hint: Read the documentation of \lstinline{iomanip})
+    \item Ask the user for 2 positive integers $a$ and $b$. Print $a + b$, $a \cdot b$, $a \ \textrm{mod} \ b$. Now print $a / b$. Use \lstinline{static_cast<T>()} to cast either $a$ or $b$ to a double and print the real division of $a / b$, too.
+\end{enumerate}
+\section*{Functions}
+\begin{enumerate}
+    \item Implement the following functions in C++ and call it from main.
+    $$ \textrm{sum}: \mathbb{Z} \times \mathbb{Z} \to \mathbb{Z}: (x,y) \mapsto x + y $$
+    $$ \textrm{product}: \mathbb{Z} \times \mathbb{Z} \to \mathbb{Z}: (x,y) \mapsto x \cdot y $$
+    \item Write a function that takes an ASCII code and returns the corresponding character. Implement the inverse function, too. ($\Sigma$ is the ASCII alphabet)
+    $$ f: \mathbb{Z} \to \Sigma: x \mapsto c $$
+    $$ f^{-1}: \Sigma \to \mathbb{Z}: c \mapsto x $$
+    \item Implement the following functions
+    $$f: \mathbb{N} \to \mathbb{N}: x \mapsto \sum_{n=1}^{x} n$$
+    $$g: \mathbb{N} \times \mathbb{N} \to \mathbb{N}: (x,y) \mapsto \sum_{n=x}^{y} n $$
+    $$h: \mathbb{N} \to \mathbb{N}: k \mapsto \prod_{i=1}^{k} i$$
+    $$p: \mathbb{N} \times \mathbb{N} \to \mathbb{N}: (n, k) \mapsto \binom{n}{k} = \frac{n!}{k! \cdot (n-k)!}$$
+    \item Write a function "isPrime" that takes an integer $n$ and returns a bool. If $n$ is prime, return true. Return false otherwise.
+
+\end{enumerate}
+\section*{Boolean operations}
+\begin{enumerate}
+    \item Implement a function \lstinline{bool neg(bool x)} that returns x negated.
+    \item Write a function \lstinline{bool f(int x, int y)} that returns true if and only if both x and y are not equal to 0.
+    \item Write a function  \lstinline{bool g(int x, int y)} that returns true if x is greater than y.
+    \item Write a function \lstinline{bool h(int x)} that returns true if x is divisible by 2
+    \item Implement a logical XOR function \lstinline{bool xor(bool a, bool b)} that returns $ a \oplus b $ by using AND, OR, and NOT operations.
+    \item The function \lstinline{bool nand(const bool* vals, int n)} takes an array of n boolean values and returns the collective NAND of all those values. Implement this function in C++.
+\end{enumerate}
+\section*{Bitwise operations}
+\begin{enumerate}
+    \item You are writing a wrapper for the "open" syscall which is used to open files. For now you want to simulate the behavior and try to evaluate the given flags. Your function prototype is \\
+    \lstinline{void open(std::string path, char flags)}. There are 4 possible flags (written in binary).
+    \begin{itemize}
+        \item read: $ (00000001)_2 $
+        \item write: $ (00000010)_2 $
+        \item append: $ (00000100)_2 $
+        \item truncate:$ (00001000)_2 $
+    \end{itemize}
+    The "flags" argument can be any combination of those. Your simulated function should print the given path and which flags have been set. How can the user combine the flags?
+    \item Write a function \lstinline{int ones(int n)} that returns the number of bits in n which are 1s.
+    \item Implement a function \lstinline{bool f(int n)} that returns true if the 1st, 2nd, and 4th bit of n are set. (Hint: 1st bit is LSB)
+    \item Write a function \lstinline{int power2(int n)} that returns the n-th power of 2 without using a loop inside the function.
+\end{enumerate}
+\end{document}
