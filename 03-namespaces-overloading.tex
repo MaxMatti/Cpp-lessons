@@ -128,6 +128,24 @@ int main() {
 \end{frame}
 
 \begin{frame}[fragile]
+    \frametitle{Scopes}
+    \begin{lstlisting}
+int main() {
+    int a = 0; ++a;
+    {
+        int a = 1;
+        a = 42;
+    }
+    std::cout << a << "\n"; // ?
+}
+int b = a; // Error?
+    \end{lstlisting}
+    \begin{itemize}
+        \item 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
     \frametitle{Function overloading}
     \begin{itemize}
         \item 
