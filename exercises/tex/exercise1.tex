@@ -17,7 +17,7 @@
 \end{enumerate}
 \section*{Functions}
 \begin{enumerate}
-    \item Implement the following functions in C++ and call it from main.
+    \item Implement the following functions in C++ and call them from main.
     $$ \textrm{sum}: \mathbb{Z} \times \mathbb{Z} \to \mathbb{Z}: (x,y) \mapsto x + y $$
     $$ \textrm{product}: \mathbb{Z} \times \mathbb{Z} \to \mathbb{Z}: (x,y) \mapsto x \cdot y $$
     \item Write a function that takes an ASCII code and returns the corresponding character. Implement the inverse function, too. ($\Sigma$ is the ASCII alphabet)
@@ -54,5 +54,30 @@
     \item Write a function \lstinline{int ones(int n)} that returns the number of bits in n which are 1s.
     \item Implement a function \lstinline{bool f(int n)} that returns true if the 1st, 2nd, and 4th bit of n are set. (Hint: 1st bit is LSB)
     \item Write a function \lstinline{int power2(int n)} that returns the n-th power of 2 without using a loop inside the function.
+\end{enumerate}
+\section*{Values and references}
+Create a custom namespace called \lstinline{exc}.
+\begin{enumerate}
+    \item Implement a function \lstinline{exc::inc} that takes an integer and increments the original variable.
+    \item Write a function \lstinline{exc::swap} that takes 2 integer variables and swaps their content. Make sure the function deals correctly with invalid arguments.
+    \item Implement a function \lstinline{void exc::ror(int* arr, int len, int n)}, that rotates an integer array of "len" elements by "n" to the right. Your function should deal with invalid arguments for "arr", "len" and "n".
+\end{enumerate}
+\section*{Pointer arithmetics}
+    The matrix $A \in \mathbb{Z}^{m \times n}$ is implemented as \lstinline{int A[m][n]}. In memory this is of course equivalent to \lstinline{int A[m * n]}. The following functions are defined inside the namespace \lstinline{mat}.
+\begin{enumerate}
+    \item Implement a function \\ \lstinline{mat::printFromRows(const int* A, int rows, int cols, int k)} that prints the k-th value of every row in matrix A. Handle invalid arguments accordingly.
+    \item Write a function \\ \lstinline{mat::printFromCols(const int* A, int rows, int cols, int k)} that prints the k-th value of every column in matrix A. Handle invalid arguments accordingly.
+    \item Write a function \\ \lstinline{mat::add(const int* A, const int* B, int* C, int rows, int cols} that takes 2 matrices A and B and puts their sum into matrix C. Handle invalid arguments, too.
+\end{enumerate}
+\section*{Function overloading}
+    Create the custom namespace \lstinline{ovl}.
+\begin{enumerate}
+    \item Implement the function \lstinline{int ovl::max(int x, int y)} that returns x \\ if x $>$ y or y otherwise. Overload this function for the datatype "double". Think about the return type, too. Each implementation of "max" should print if it has been called with int or double arguments.
+\end{enumerate}
+\section*{Memory manipulation (advanced)}
+\begin{enumerate}
+    \item An integer i consists of 4 bytes. Each byte can be manipulated seperately. Choose a datatype T with \lstinline{sizeof(T) == 1}. Create a pointer of type T, set it to the address of i. Fix type mismatches by using C++ casts like \lstinline{static_cast<T*>()}. Use pointer arithmetics to increment each of the 4 bytes by 1. Print the result.
+    \item Print the hex value of each byte of an integer to stdout. Interpret the result with the endianness of your system.
+    \item Use a char pointer to modify the exponent of a float variable. Take the endianness of your system into consideration.
 \end{enumerate}
 \end{document}
