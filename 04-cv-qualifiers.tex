@@ -1,0 +1,273 @@
+\input{definitions}
+
+\begin{document}
+
+\title{cv-qualified types}
+\subtitle{Good interface design}
+\date{\today}
+\author{Florian Warg, Max Staff}
+
+\maketitle
+
+\begin{frame}[fragile]
+    \frametitle{Motivation 1}
+    \begin{itemize}
+        \begin{lstlisting}[numbers=none]
+int min(int* arr, size_t len);
+        \end{lstlisting}
+    \item think of a function that takes an array by pointer
+    \item since it is called by reference, the function might alter the array
+    \item how can we guarantee the user that we do not alter data?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Motivation 2: Copy operations}
+    \begin{itemize}
+        \begin{lstlisting}[numbers=none]
+class Person {
+private:
+    string name;
+    int age;
+public:
+    /* ... */
+    string getName() { return name; }
+};
+        \end{lstlisting}
+    \item getters (accessors) should allow to read values of private members
+    \item imagine "name" to be a huge object (really long string)
+    \item every time we check the value we would have to copy and return the whole string
+    \item how can we reduce the overhead?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Motivation 2: Reducing overhead?}
+    \begin{itemize}
+        \begin{lstlisting}[numbers=none]
+class Person {
+private:
+    string name;
+    int age;
+public:
+    /* ... */
+    string& getName() { return name; }
+};
+        \end{lstlisting}
+    \item we choose to return the private variable by reference
+    \item overhead is reduced from copying the whole object to copying a constant size reference
+    \item have we introduced a new problem?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Motivation 2: Violation of OOP rules}
+    \begin{itemize}
+        \begin{lstlisting}[numbers=none]
+Person p("Alice");
+cout << p.getName(); // print "Alice"
+p.getName() = "";
+cout << p.getName(); // print ""
+        \end{lstlisting}
+    \item why do we use classes instead of structs?
+    \item we use getters and setters so the object can validate changes to private members
+    \item this example behaves like a struct with public members
+    \item can we reduce overhead and still conform to oop rules?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{The const qualifier}
+    \begin{itemize}
+    \item we can mark variables as constant (const)
+    \item const variables can not be modified
+    \item trying to modify const vars will cause a compiler error
+        \begin{lstlisting}[numbers=none]
+const T name; // name is const obj of type T
+T const name; // name is const obj of type T
+
+const T* name;  // ptr to const T
+T const* name;  // ptr to const T
+
+T* const name;  // const ptr to T
+
+const T* const name;  // const ptr to const T
+T const* const name;  // const ptr to const T
+        \end{lstlisting}
+    \item references have the same rules as pointers
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{A better interface}
+    \begin{itemize}
+    \item we can modify example 1 to make strong guarantees about the behavior of the function without exposing implemetation
+        \begin{lstlisting}[numbers=none]
+/* old */
+int min(int* arr, size_t len);
+/* better */
+int min(const int* arr, size_t len);
+        \end{lstlisting}
+    \item what is const here? do we need more consts?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Using const in classes}
+    \begin{itemize}
+    \item we use const in example 2 to prevent modification of private variables through getter methods
+        \begin{lstlisting}[numbers=none]
+/* old */
+string& Person::getName() { return name; }
+/* better */
+const string& Person::getName() { return name; }
+        \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Declaring constant values}
+    \begin{itemize}
+    \item const can also be used to declare constants in code
+    \begin{lstlisting}[numbers=none]
+/* bad because not type-safe */
+#define PI 3.1415926
+/* better */
+const double PI = 3.1415926;
+    \end{lstlisting}
+    \item those constants can also be used for array sizes
+    \begin{lstlisting}[numbers=none]
+size_t n = 32;
+int arr[n]; // only works with VLA
+
+const size_t N = 32;
+int arr2[N]; // works without VLA
+    \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Making non-const things const}
+    \begin{itemize}
+    \item the compiler can implicitly cast objects to const objects
+    \item although it does not work the other way around
+    \item the compiler can always make things "more const"
+    \begin{lstlisting}[numbers=none]
+void f(const int n) { /* ... */ }
+void g(int n) { /* ... */ }
+int x = 42;
+const int y = 42;
+f(x); // int -> const int
+f(y); // const int -> const int
+g(x); // ERROR - cannot treat const as non-const
+g(y); // const int -> const int 
+    \end{lstlisting}
+    \item \lstinline{const_cast<T>()} can be used to remove const (please do not use this, yet)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Const in classes - attributes}
+    \begin{itemize}
+    \item remember, const values cannot be changed
+    \item remember, attributes have to be constructed before we enter the ctor
+    \begin{lstlisting}[numbers=none]
+struct X {
+    const int N;
+};
+/* error because no default ctor */
+    \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Const in classes - attributes}
+    \begin{itemize}
+    \item use initializer list to set constants
+    \item default values in the class definition are also possible
+    \begin{lstlisting}[numbers=none]
+struct X {
+    const int N;
+    X() { N = 42; }
+};
+/* compiler error */
+
+struct X {
+    const int N;
+    X() : N(42) {}
+};
+/* OK */
+    \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Const in classes - methods}
+    \begin{itemize}
+    \item we can make methods in classes const, too
+    \item const methods can not modify state of the object
+    \item const methods can be called on const objects
+    \begin{lstlisting}[numbers=none]
+class Rectangle {
+private:
+    /* ... */
+    void setWidth(double width);
+    double getWidth() const { return width; }
+};
+Rectangle r1;
+const Rectangle r2(2, 4);
+r1.setWidth(2); // OK
+r2.setWidth(2); // error - r2 is const
+r1.getWidth();  // OK
+r2.getWidth();  // OK - function is const
+    \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{General rules for const}
+    \begin{itemize}
+    \item use const as much as possible where it makes sense
+    \item use const to define type-safe constant values
+    \item getters for primitive types return by value
+    \item getters for non-primitive types return by const reference
+    \item accessor methods can be constant functions
+    \item express read-only intent of functions with const reference arguments
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{volatile qualifier}
+    \begin{itemize}
+    \item prevent optimization for variable
+    \item usually only used for low-level access (OS) or embedded systems
+    \begin{lstlisting}[numbers=none]
+volatile int x = 42; // prevent optimization
+cout << x;
+// cannot optimize to cout << 42
+// because x might have been changed 
+    \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{mutable qualifier}
+    \begin{itemize}
+    \item mutable attributes of a const object can still be changed
+    \item it is generally a bad idea to mess with constness
+    \item mutable has almost no applications besides debugging
+    \begin{lstlisting}[numbers=none]
+struct ShopItem {
+    int id;
+    string name;
+    mutable int priceCents;
+};
+
+const ShopItem item = { 0, "Club-Mate", 120 };
+item.id = 1; // ERROR
+item.priceCents = 140; // OK
+    \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\end{document}
