@@ -179,4 +179,75 @@ delete p;
     \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]
+    \frametitle{Pure virtual functions}
+    \begin{itemize}
+    \item pure virtual functions are incomplete virtual functions
+    \item the implementation has to be provided by a derived class by overriding
+    \begin{lstlisting}[numbers=none]
+struct Parent {
+    virtual void implementMe() = 0;
+};
+struct Child : public Parent {
+    void implementMe() override {
+        cout << "implemented by child\n";
+    }
+};
+    \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Abstract classes - 1}
+    \begin{itemize}
+    \item classes are abstract if they contain at least 1 pure virtual function
+    \item abstract classes cannot be instantiated
+    \item however pointers and references are allowed
+    \begin{lstlisting}[numbers=none]
+/* ... */
+struct Parent;
+struct Child;
+Parent p; // error - Parent is abstract
+Child c;  // ok
+Parent& alsoC = c;
+alsoC.implementMe(); 
+    \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Abstract classes - 2}
+    \begin{itemize}
+    \item classes can also be made abstract by having a pure virtual destructor
+    \item however, since every class needs a dtor, we still have to provide one
+    \begin{lstlisting}[numbers=none]
+class Abstract {
+public:
+    virtual ~Abstract() = 0;
+};
+Abstract::~Abstract() {}
+    \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Interfaces}
+    \begin{itemize}
+    \item interfaces are abstract classes that only contain pure virtual functions
+    \begin{lstlisting}[numbers=none]
+struct IMath {
+    virtual int max(int a, int b) = 0;
+    virtual int min(int a, int b) = 0;
+    virtual int square(int x) = 0;
+};
+class IntMath : public IMath {
+public:
+    int max(int a, int b) override { /* ... */}
+    int min(int a, int b) override { /* ... */}
+    int square(int x) override { /* ... */ }
+};
+    \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
 \end{document}
