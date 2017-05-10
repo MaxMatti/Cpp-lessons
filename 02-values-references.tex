@@ -240,5 +240,79 @@ cout << i; // print 2
         \end{lstlisting}
 \end{frame}
 
+\begin{frame}[fragile]
+    \frametitle{Namespaces}
+    \lstinputlisting{examples/01-hello-world.cpp}
+    \begin{lstlisting}
+using namespace std;
+namespace own {
+    void otherFunc() { return; }
+}
+own::otherFunc();
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Namespaces}
+    \begin{lstlisting}
+void outsider() { return; }
+
+namespace own {
+    void firstFunc() { return; }
+
+    namespace second {
+        void otherFunc() {
+            firstFunc(); ::outsider(); return;
+        }
+    }
+}
+own::second::otherFunc();
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Namespaces}
+    \begin{lstlisting}
+int twice() { return 1; }
+
+namespace own {
+    int twice() { return 2; }
+    void firstFunc() {
+        std::cout << own::twice();
+        std::cout << ::twice();
+        std::cout << twice();
+    }
+}
+
+inline namespace own {
+    void firstFunc() { return; }
+}
+
+firstFunc();
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Namespaces}
+    \begin{lstlisting}
+#include <iostream>
+using std::cout;
+
+int main() {
+    cout << "Hello World!\n";
+    return 0;
+}
+    \end{lstlisting}
+    \begin{lstlisting}
+#include <iostream>
+// using namespace std;
+
+int main() {
+    std::cout << "Hello World!\n";
+    return 0;
+}
+    \end{lstlisting}
+\end{frame}
+
 
 \end{document}
