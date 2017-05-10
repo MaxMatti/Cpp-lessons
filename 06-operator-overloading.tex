@@ -1,0 +1,258 @@
+\input{definitions}
+\usepackage{colortbl}
+
+\begin{document}
+
+\title{Operator overloading}
+\subtitle{Using standard library functions and providing an intuitive interface}
+\date{\today}
+\author{Florian Warg, Max Staff}
+
+\maketitle
+
+\begin{frame}[fragile]
+    \frametitle{How do you sort your own objects?}
+    \begin{itemize}
+    \item do not use your own containers
+    \item do not build your own sorting function
+    \item use the standard library
+    \visible<2->{\item solution: build own comparison operators}
+    \visible<3->{\item also helps for making your object "printable"...}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Declaring an operator I}
+    \begin{lstlisting}[numbers=none]
+class Gear {
+    float gearRatio;
+public:
+    float getRatio() { return this->gearRatio; }
+    bool operator<(const Gear& other);
+    bool operator==(const Gear& other);
+
+    bool operator<=(const Gear& other);
+    bool operator>=(const Gear& other);
+    bool operator>(const Gear& other);
+    bool operator!=(const Gear& other);
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Declaring an operator II}
+    \begin{lstlisting}[numbers=none]
+class Matrix {
+    int content[width * height];
+public:
+    int* operator[](std::size_t index);
+    Matrix operator+(const Matrix& other) const;
+    Matrix& operator+=(const Matrix& other);
+}
+
+Matrix a, b;
+a += b;
+Matrix c = a + b;
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Declaring an operator III}
+    \begin{lstlisting}[numbers=none]
+class Matrix {
+    int content[width * height];
+public:
+    Matrix& operator++();
+    Matrix operator++(int);
+    Matrix& operator--();
+    Matrix operator--(int);
+}
+
+Matrix a;
+++a;
+a++;
+--a;
+a--;
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Overloading an increment operator}
+    \begin{lstlisting}[numbers=none]
+Matrix& Matrix::operator++() {
+    for (auto& i : this->content) {
+        ++i; // increment
+    }
+    return *this; // return incremented state
+}
+
+Matrix Matrix::operator++(int) {
+    Matrix tmp(*this); // copy
+    this->operator++(); // increment
+    return tmp; // return previous state
+}
+
+Matrix a;
+++a;
+a++;
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Overloading a function operator}
+    \begin{lstlisting}[numbers=none]
+class Matrix {
+    int content[width * height];
+public:
+    Matrix& operator()(std::size_t x, std::size_t y);
+}
+
+int Matrix::operator()(std::size_t x, std::size_t y) {
+    return this->content[y * width + x];
+}
+
+Matrix a;
+int b = a(5, 3);
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Functors}
+    \begin{itemize}
+    \item Functor = object with overloaded \lstinline{()}-operator
+    \item better optimizable than function-pointers
+    \item useful with templates (coming soon)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Which operators are overloadable?}
+    \begin{lstlisting}[numbers=none]
++       -       *       /       %
++=      -=      *=      /=      %=
+
+&       |       ^       ~
+&=      |=      ^=      
+
+<<      >>      <       >       ==
+<<=     >>=     <=      >=      !=
+
+!       &&      ||      ++      --
+->*     ->      ,       ()      []
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Which operators are not overloadable?}
+    \begin{itemize}
+    \item \lstinline{::} scope resolution
+    \item \lstinline{.} member access
+    \item \lstinline{.*} member access through pointer to member
+    \item \lstinline{?:} ternary conditional
+    \visible<2->{\item new or nonexistent operators (\lstinline{**, <>, &|})}
+    \visible<3->{\item \lstinline{&&, ||} lose short-circuit (aka "lazy") evaluation}
+    \visible<4->{\item precedence, grouping or amount of operands cannot be changed}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Overloading outside of the class}
+    \begin{tabular}{lll}
+    \rowcolor{gray!50}
+    expression & member function & non-member\\
+    {\lstinline!@a!} & {\lstinline!(a).operator@()!} & {\lstinline!operator@(a)!} \\
+    \rowcolor{gray!25}
+    {\lstinline!a@b!} & {\lstinline!(a).operator@(b)!} & {\lstinline!operator@(a, b)!} \\
+    {\lstinline!a=b!} & {\lstinline!(a).operator=(b)!} & \cellcolor{red!15}not possible \\
+    \rowcolor{gray!25}
+    {\lstinline!a(b...)!} & {\lstinline!(a).operator()(b...)!} & \cellcolor{red!25}not possible \\
+    {\lstinline!a[b]!} & {\lstinline!(a).operator[](b)!} & \cellcolor{red!15}not possible \\
+    \rowcolor{gray!25}
+    {\lstinline!a->!} & {\lstinline!a.operator->()!} & \cellcolor{red!25}not possible \\
+    {\lstinline!a@!} & {\lstinline!a.operator@(0)!} & {\lstinline!operator@(a, 0)!} \\
+    \end{tabular}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Example}
+    \begin{lstlisting}[numbers=none]
+class Matrix {
+    int content[width * height];
+    // ...
+public:
+    void print(std::ostream& stream) const;
+}
+
+std::ostream& operator<<(std::ostream& stream, const Matrix& matrix) {
+    matrix.print(stream);
+    return stream;
+}
+
+Matrix a, b;
+std::cout << a << b << "\n";
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{When to overload}
+    Three Basic Rules of Operator Overloading in C++
+    \begin{itemize}
+        \item Only overload if the meaning of the operator is obviously clear and undisputed
+        \item Always stick to the operator's well-known semantics
+        \item Always provide all out of a set of related operations
+    \end{itemize}
+    Source: \href{http://stackoverflow.com/q/4421706/3729508}{http://stackoverflow.com/q/4421706/3729508}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{How to overload}
+    The Decision between Member and Non-member
+    \begin{itemize}
+        \item Some operators are required to be members
+        \item unary operators should be members
+        \item if one operand is treated specially (e.g. is modified) should be members
+        \item if both operands are treated equally (e.g. addition) should be non-member
+        \item if access to private attributes is required should be non-member
+        \item try to avoid declaring friend functions
+    \end{itemize}
+    Source: \href{http://stackoverflow.com/q/4421706/3729508}{http://stackoverflow.com/q/4421706/3729508}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Which Comparison Operators to use}
+    \begin{itemize}
+        \item standard library algorithms (e.g. \lstinline{std::sort}) will always expect \lstinline{operator<}
+        \item users expect other operators if \lstinline{operator<} exists
+    \end{itemize}
+    \footnotesize
+    \begin{lstlisting}[numbers=none]
+bool operator==(const X& l, const X& r){ /* actually compare */ }
+bool operator!=(const X& l, const X& r){return !operator==(l,r);}
+bool operator< (const X& l, const X& r){ /* actually compare */ }
+bool operator> (const X& l, const X& r){return  operator< (r,l);}
+bool operator<=(const X& l, const X& r){return !operator> (l,r);}
+bool operator>=(const X& l, const X& r){return !operator< (l,r);}
+    \end{lstlisting}
+    Source: \href{http://stackoverflow.com/q/4421706/3729508}{http://stackoverflow.com/q/4421706/3729508}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Conversion Operators}
+    \begin{itemize}
+        \item conversion to other types (e.g. bool, string) can be overloaded
+        \item difference between implicit and explicit conversion
+    \end{itemize}
+    \footnotesize
+    \begin{lstlisting}[numbers=none]
+class MyString {
+public:
+    operator const char*() const; {return data_;} // implicit
+    explicit operator const char*() const {return data_;}
+private:
+    const char* data_;
+}
+    \end{lstlisting}
+    Source: \href{http://stackoverflow.com/q/4421706/3729508}{http://stackoverflow.com/q/4421706/3729508}
+\end{frame}
+
+\end{document}
