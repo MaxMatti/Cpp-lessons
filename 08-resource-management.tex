@@ -1,0 +1,315 @@
+\input{definitions}
+\usepackage{colortbl}
+
+\begin{document}
+
+\title{Resource Management}
+\subtitle{RAII \& Rule of Five}
+\date{\today}
+\author{Florian Warg, Max Staff}
+
+\maketitle
+
+\begin{frame}[fragile]
+    \frametitle{What are resources?}
+    \begin{itemize}
+    \item a resource can be anything that exists in limited supply
+    \item allocated heap memory
+    \item thread, locked mutex, ...
+    \item open socket, open file, ...
+    \item disk space, database connection, ...
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Working with system resources}
+    \begin{itemize}
+        \item system resources are usually obtained via low level C APIs
+        \item management involves 2 functions
+        \begin{enumerate}
+            \item \lstinline{acquire()};
+            \item \lstinline{release()};
+        \end{enumerate}
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+char msg[] = "100: [error] bugs are everywhere!\n";
+/* acquire() */
+int fd = open("/tmp/log.txt", O_WRONLY | O_APPEND);
+/* use resource */
+write(fd, msg, sizeof(msg));
+/* release() */
+close(fd);
+    \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Leaking resources}
+    \begin{itemize}
+        \item it is easy to forget about releasing resources
+        \item handle to acquired resource may be lost
+        \item -> resource leak
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+{
+    int arrSize;
+    cin >> arrSize;
+    int* arr = new int[arrSize];
+    for (int i = 0; i < arrSize; ++i) {
+        arr[i] = i;
+    }
+}
+/* resource leaked here */
+    \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Leaking resources II: Deadlock}
+    \begin{lstlisting}[numbers=none]
+int sum = 0;
+mutex m;
+void f() { m.lock(); sum += 2; m.unlock(); }
+void g() { m.lock(); sum += 10; }
+thread t1(f); thread t2(g); 
+t1.join(); t2.join();
+    \end{lstlisting}
+    \begin{itemize}
+    \item if t2 starts execution before t1, it will cause a deadlock
+    \item even worse: t2 might only \textbf{sometimes} start before t1
+    \item very hard to debug because it is not always reproducable
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{RAII}
+    \begin{itemize}
+    \item \textbf{Resource Acquisition Is Initialization}
+    \item bind the life cycle of resources to the life time of an object
+    \item resources are acquired during object construction
+    \item resources are released during object destruction
+    \item -> resource becomes an invariant of the object
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{RAII with file example}
+    \begin{lstlisting}[numbers=none]
+class File {
+private:
+    int fd;
+public:
+    File(string path) {
+        fd = open(path.c_str(), O_RDONLY);
+    }
+    ~File() { close(fd); }
+    ssize_t write(void* buf, size_t size) { ... }
+    ssize_t read(void* buf, size_t size) { ... }
+};
+/* ... */
+{
+    File f("/tmp/log.txt"); // resource acquired
+    char msg[] = "101: [success] Way better!\n";
+    f.write(msg, sizeof(msg));
+} // resource released
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{RAII with mutex example}
+    \begin{lstlisting}[numbers=none]
+class LockGuard {
+private:
+    mutex& mtx;
+public:
+    LockGuard(mutex& mtx) : mtx(mtx) { mtx.lock(); }
+    ~LockGuard() { mtx.unlock(); }
+};
+mutex m;
+int sum = 0;
+void f() { LockGuard guard(m); sum += 2; }
+void g() { LockGuard guard(m); sum += 10; }
+int main() {
+    thread t1(f); thread t2(g);
+    t1.join(); t2.join();
+}
+    \end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]
+    \frametitle{RAII with heap storage example}
+    \begin{lstlisting}
+class HeapArray {
+private:
+    int* arr;
+    size_t size;
+public:
+    HeapArray(size_t size)
+        : arr(new int[size]), size(size) {}
+    ~HeapArray() { delete[] arr; }
+    int& operator[](size_t i) { return arr[i]; }
+};
+/* ... */
+{
+    HeapArray a(1000); // resource acquired
+    a[512] = 42;
+} // resource released
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Problematic behavior}
+    \begin{itemize}
+        \item resource management introduces a new problem
+        \item the user does not know that resources are managed
+        \item the user expects every class to behave like a fundamental data type
+        \item reference semantics should only apply to pointers and references
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+HeapArray a(1000);
+a[512] = 42;
+HeapArray b = a; // user wants to make a copy
+b[512] = 0; // user wants to edit 2nd array
+cout << "a[512] = " << a[512] << "\n"; // ???
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Even more problematic behavior}
+    \begin{itemize}
+        \item when making copies, resources are not an invariant anymore
+        \item this \textbf{will} introduce bugs
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+void f(HeapArray a) { cout << a[0] << "\n"; }
+int main() {
+    HeapArray x(10);
+    f(x);
+    x[3] = 42; // ???
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Rule of Five}
+    A class that manages its own resources, must provide 5 special functions in order to implement the semantics of fundamental types
+    \begin{enumerate}
+        \item destructor
+        \item copy constructor
+        \item copy assignment operator
+        \item move constructor
+        \item move assignment operator
+        \item (functions to make type swappable)
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Destructor}
+    \begin{itemize}
+        \item release resources in reverse order of construction
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+/* ctor */
+HeapArray(size_t size)
+    : arr(new int[size]), size(size) {}
+/* dtor */
+~HeapArray() { delete[] arr; }
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Copy constructor}
+    \begin{itemize}
+        \item construct a new object with the same value
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+HeapArray(const HeapArray& rhs)
+    : arr(new int[rhs.size]), size(rhs.size) {
+    copy(rhs.arr, rhs.arr + size, arr);
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Copy assignment operator}
+    \begin{itemize}
+        \item assign value of other object to this object
+        \item usually implemented in terms of copy ctor
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+HeapArray& operator=(HeapArray rhs) {
+    swap(*this, rhs); // no throw
+    return *this;
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{C++ concept: Swappable}
+    \begin{itemize}
+        \item any lvalue or rvalue of \lstinline{T} can be swapped with an lvalue or rvalue of some other type
+        \item swapping is done by calling unqualified \lstinline{swap()} in context where \lstinline{std::swap} and user-defined \lstinline{swap} are visible
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+struct MyT {
+    int x;
+    friend void swap(MyT& lhs, MyT& rhs);
+};
+void swap(MyT& lhs, MyT& rhs) {
+    using std::swap;
+    swap(lhs.x, rhs.x);
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Move constructor}
+    \begin{itemize}
+        \item construct new object by moving state from other object
+        \item "hand over pointer instead of copying big objects"
+        \item other object is left empty (but in valid state)
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+HeapArray(HeapArray&& rhs) 
+    : arr(move(rhs.arr)), size(move(rhs.size)) {
+    rhs.arr = nullptr;
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Move assignment operator}
+    \begin{itemize}
+        \item move internal state of object to existing object
+        \item "hand over pointer instead of copying big objects"
+        \item other object is left empty (but in valid state)
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+HeapArray& HeapArray::operator=(HeapArray&& rhs) {
+    arr = move(rhs.arr);
+    size = move(rhs.size);
+    rhs.arr = nullptr;
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Rule of Zero}
+    \begin{itemize}
+        \item assume you compose a new data type
+        \item if all of the member types conform to RAII and no further resources are required, the new type conforms to RAII as well
+        \item -> in high level C++ none of the RO5 functions have to be implemented
+        \item the compiler-generated implementation is sufficient
+        \item this is called the \textbf{Rule of Zero}
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+struct MyType {
+    string str;
+    vector<int> vec;
+}; // string and vector conform to RAII
+MyType x;
+MyType y = x; // implicit copy ctor
+MyType z = std::move(z); // implicit move assign
+    \end{lstlisting}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,181 @@
+\input{definitions}
+\usepackage{colortbl}
+
+\begin{document}
+
+\title{Exceptions}
+\subtitle{How to deal with errors}
+\date{\today}
+\author{Florian Warg, Max Staff}
+
+\maketitle
+
+\begin{frame}[fragile]
+    \frametitle{Exception handling}
+    \begin{itemize}
+    \item exception handling is a way of dealing with runtime errors
+    \item if an exception occurs, control is transferred to handlers
+    \item exceptions may be handled gracefully so program execution can continue
+    \item exceptions can occur:
+    \begin{itemize}
+        \item when trying to allocate memory
+        \item when providing an illegal argument to a function
+        \item when we break math (divide by zero)
+        \item when we dynamically cast to unrelated types
+        \item when a variable overflows or underflows
+        \item ...
+    \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Try and Catch}
+    \begin{itemize}
+        \item critical parts of program must be surrounded by \lstinline{try} block
+        \item this is followed by a \lstinline{catch} block that handles the exception
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+void evil() { throw exception(); }
+/* ... */
+try {
+    evil();
+} catch (const exception& e) {
+    cerr << e.what() << "\n";
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Pre-defined exceptions}
+    \begin{itemize}
+        \item \lstinline{logic_error (invalid_argument, ...)}
+        \item \lstinline{runtime_error (overflow_error, ...)}
+        \item \lstinline{bad_typeid}
+        \item \lstinline{bad_cast}
+        \item \lstinline{bad_weak_ptr}
+        \item \lstinline{bad_function_call}
+        \item \lstinline{bad_alloc}
+        \item \lstinline{bad_exception}
+        \item \lstinline{ios_base::failure}
+        \item ...
+    \end{itemize}
+    \href{All exceptions on cppreference}{http://en.cppreference.com/w/cpp/error/exception}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Create your own exceptions}
+    \begin{itemize}
+    \item you can derive from \lstinline{std::exception}
+    \item your class has to implement the \lstinline{what()} function
+    \begin{lstlisting}[numbers=none]
+class MyException : public std::exception {
+    virtual const char* what() const override {
+        return "My exception was thrown!\n";
+    }
+};
+    \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Handling different exceptions}
+    \begin{itemize}
+    \item you can use several \lstinline{catch} blocks to handle different exceptions
+    \begin{lstlisting}[numbers=none]
+void evil(int x) {
+    if (x < 0)
+        throw std::exception();
+    else
+        throw MyException();
+}
+/* ... */
+try { evil(1); } 
+catch (std::exception e) { /* ... */ } 
+catch (MyException e) { /* ... */ }
+    \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Throwing anything}
+    \begin{itemize}
+    \item you are not limited to exception objects
+    \item you can actually throw \textbf{anything}
+    \item (but why would you want to do that)
+    \begin{lstlisting}[numbers=none]
+void evil() { throw 42; }
+/* ... */
+try { evil(); } 
+catch (int i) {
+    cerr << i << '\n';
+}
+    \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Catching anything}
+    \begin{itemize}
+    \item because of polymorphism you can catch all objects of a class hierarchy by reference
+    \item you can also catch anything that is thrown
+    \begin{lstlisting}[numbers=none]
+void evil() { throw MyException(); }
+/* ... */
+try { evil(); 
+} catch (std::exception& e) {
+    /* also catches MyException */
+} catch (...) {
+    /* catches anything */
+}
+    \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Exception safety guarantees}
+    \begin{itemize}
+        \item there are 4 levels of exception guarantees in C++
+        \item the higher safety guarantees make it easy to recover from exceptions
+        \item levels are in decreasing order (level 1 is the highest safety guarantee)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Level 1: No-throw guarantee}
+    \begin{itemize}
+        \item function does not throw exceptions even in exceptional situations
+        \item occuring exceptions are handled internally
+        \item function will success in every situation
+        \item keyword \lstinline{noexcept} can be used to mark functions
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+int f() noexcept { return 42; }
+    \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Level 2: Strong exception safety}
+    \begin{itemize}
+        \item also known as commit or rollback semantics
+        \item function can fail but is guaranteed to have no side effects
+        \item if this function fails, all data will retain their original values
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Level 3: Basic exception safety}
+    \begin{itemize}
+        \item also known as no-leak guarantee
+        \item failed function can have side effects but invariants are preserved and resources are not leaked
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Level 4: No exception safety}
+    \begin{itemize}
+        \item no guarantees are made \texttrademark
+    \end{itemize}
+\end{frame}
+
+\end{document}
