@@ -149,7 +149,7 @@ std::cout << letters[4] << "\n";
 \defverbatim{\thislisting}{
 \begin{lstlisting}[numbers=none]
 for (auto i = fib.rbegin(); i != fib.rend(); ++i) {
-    std::cout << i;
+    std::cout << *i;
 }
 \end{lstlisting}}
 
@@ -164,7 +164,7 @@ std::vector fib {1, 1, 2, 3, 5, 8};
 for (auto i : fib) { std::cout << i; }
 
 for (auto i = fib.begin(); i != fib.end(); ++i) {
-    std::cout << i;
+    std::cout << *i;
 }
     \end{lstlisting}
     \visible<2->{\thislisting}
@@ -193,7 +193,7 @@ std::replace(fib.begin(), fib.end(), 1, 0);
 std::vector fib {1, 8, 1, 2, 34, 5, 21, 13, 3};
 
 bool f(int i) { return i % 2 == 0; }
-bool g(int i) { return i > 5 == 0; }
+bool g(int i) { return i > 5; }
 int h(int i) { return i * 2; }
 bool k(int i, int j) { return i > j; }
 
@@ -209,12 +209,12 @@ std::sort(fib.begin(), fib.end(), k);
 
 \defverbatim{\thislisting}{
 \begin{lstlisting}[numbers=none]
-int a = 1, b = 1;
+int a = 0, b = 1;
 
-fib.reserve(50);
+fib.resize(20);
 
-std::generate(fib.begin(), fib.begin() + 50,
-    [](){int c = a + b; a = b; b = c; return c; }
+std::generate(fib.begin() + 2, fib.end(),
+    [&](){int c = a + b; a = b; b = c; return c; }
 );
 \end{lstlisting}}
 
