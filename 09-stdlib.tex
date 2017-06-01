@@ -210,9 +210,8 @@ std::sort(fib.begin(), fib.end(), k);
 \defverbatim{\thislisting}{
 \begin{lstlisting}[numbers=none]
 int a = 0, b = 1;
-
+std::vector<int> fib = {0, 1};
 fib.resize(20);
-
 std::generate(fib.begin() + 2, fib.end(),
     [&](){int c = a + b; a = b; b = c; return c; }
 );
