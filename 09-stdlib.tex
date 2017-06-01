@@ -1,0 +1,173 @@
+\input{definitions}
+\usepackage{colortbl}
+\usepackage{multirow}
+
+\begin{document}
+
+\title{stdlib}
+\subtitle{The standard library}
+\date{\today}
+\author{Florian Warg, Max Staff}
+
+\maketitle
+
+\begin{frame}[fragile]
+    \frametitle{A few words on templates}
+    \begin{itemize}
+        \item Classes and functions depending on compile-time defined types or values
+        \item template-arguments given in \lstinline{<>}, other arguments as usual
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+std::array<int, 50> test;
+    \end{lstlisting}
+    \begin{itemize}
+        \item arguments can sometimes be deducted from context
+        \item since C++17 class arguments can sometimes be deducted:
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+std::sort(test.begin(), test.end());
+std::array test{1, 2, 3};
+std::array test{1, 2, 3.0}; // error
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Containers - Forward List}
+    \begin{lstlisting}[numbers=none]
+struct ListElem {
+    int content;
+    ListElem* next;
+}
+// Why reinvent the wheel?
+
+#include <forward_list>
+
+std::forward_list<char> letters {'H', 'i'};
+std::forward_list x {'H', 'i'}; // since C++17
+
+x.insert_after(x.begin() + 1, 's');
+std::cout << letters.front() << "\n";
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Containers - List}
+    \begin{lstlisting}[numbers=none]
+#include <list>
+
+std::list<char> letters {'H', 'i'};
+std::list x {'e', 'l', 'l', 'o'};
+
+x.insert(x.begin(), 'H');
+if (!letters.empty()) {
+    std::cout << x.front() << "\n";
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Containers - Vector}
+    \begin{lstlisting}[numbers=none]
+#include <vector>
+
+std::vector<char> l
+std::vector x {'H', 'i'}; // since C++17
+
+letters[1] = 'e';
+
+letters.push_back('l');
+letters.push_back('l');
+letters.push_back('o');
+
+std::cout << letters[4] << "\n";
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Other containers}
+    \begin{itemize}
+        \item array, vector
+        \item queue, deque, stack
+        \item list, forward\_list
+        \item set, multiset
+        \item map, multimap
+        \item unordered\_set, unordered\_multiset
+        \item unordered\_map, unordered\_multimap
+        \item string, basic\_string
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Comparison: functionality}
+    \setlength\tabcolsep{.1cm}
+    \tiny{
+    \begin{tabular}{|r|lllll|llll|llllll|lllllllll|ll|}
+        \hline
+        Container & \multicolumn{5}{l|}{Element access} & \multicolumn{4}{l|}{Iterators} & \multicolumn{6}{l|}{Capacity} & \multicolumn{9}{l|}{Modifiers/Operations} & \multicolumn{2}{l|}{Comparison} \\
+        \hline
+        & \rotatebox{270}{at} & \rotatebox{270}{operator[]} & \rotatebox{270}{front} & \rotatebox{270}{back} & \rotatebox{270}{data} & \rotatebox{270}{(c)begin} & \rotatebox{270}{(c)end} & \rotatebox{270}{(c)rbegin} & \rotatebox{270}{(c)rend} & \rotatebox{270}{empty} & \rotatebox{270}{size} & \rotatebox{270}{max\_size} & \rotatebox{270}{reserve} & \rotatebox{270}{capacity} & \rotatebox{270}{shrink\_to\_fit} & \rotatebox{270}{clear} & \rotatebox{270}{insert} & \rotatebox{270}{emplace} & \rotatebox{270}{erase} & \rotatebox{270}{\{push,pop\}\_back} & \rotatebox{270}{\{push,pop\}\_front} & \rotatebox{270}{resize} & \rotatebox{270}{fill} & \rotatebox{270}{swap} & \rotatebox{270}{==, \!=} & \rotatebox{270}{<, <=, >, >=} \\
+        \hline
+        vector & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} \\
+        basic\_string & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{green} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} \\
+        array & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} \\
+        deque & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} \\
+        \hline
+        list & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} \\
+        forward\_list & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{red} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{yellow} & \cellcolor{yellow} & \cellcolor{yellow} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} \\
+        \hline
+        (multi)set & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} \\
+        (multi)map & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} \\
+        u\_(multi)set & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} \\
+        u\_(multi)map & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} \\
+        \hline
+        stack & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{red} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} \\
+        queue & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{red} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{green} \\
+        priority\_queue & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{red} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} & \cellcolor{red} & \cellcolor{green} & \cellcolor{red} & \cellcolor{red} \\
+        \hline
+    \end{tabular}}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Comparison: Complexity}
+    \begin{itemize}
+        \item always O(1): begin(), end(), empty(), size(), push\_back()
+    \end{itemize}
+    \setlength\tabcolsep{.1cm}
+    \begin{tabular}{lllllll}
+        Container & \multicolumn{4}{l}{Insertion/Erase} & Access & Find \\
+        vector & \cellcolor{red} n & \cellcolor{red} n & \cellcolor{red} n & \cellcolor{green} 1 & \cellcolor{green} 1 & \cellcolor{red} n \\
+        string & \cellcolor{red} n & \cellcolor{red} n & \cellcolor{red} n & \cellcolor{green} 1 & \cellcolor{green} 1 & \cellcolor{red} n \\
+        list & \cellcolor{green} 1 & \cellcolor{green} 1 & \cellcolor{red} n & \cellcolor{green} 1 & \cellcolor{orange} $\leftarrow$ & \cellcolor{red} n \\
+        forward\_list & \cellcolor{green} 1 & \cellcolor{green} 1 & \cellcolor{red} n & \cellcolor{red} n & \cellcolor{orange} $\leftarrow$ & \cellcolor{red} n \\
+        set/map & \cellcolor{yellow} \footnotesize{log(n)} & \cellcolor{yellow} \footnotesize{log(n)} & \cellcolor{yellow} \footnotesize{log(n)} & \cellcolor{yellow} \footnotesize{log(n)} & \cellcolor{green} 1 & \cellcolor{yellow} \footnotesize{log(n)} \\
+        unordered set/map & \cellcolor{orange} 1 (n) & \cellcolor{orange} 1 (n) & \cellcolor{orange} 1 (n) & \cellcolor{orange} 1 (n) & \cellcolor{orange} 1 (n) & \cellcolor{red} n \\
+        (de)que(ue) & \cellcolor{yellow} \footnotesize{log(n)} & \cellcolor{yellow} \footnotesize{log(n)} & \cellcolor{yellow} \footnotesize{log(n)} & \cellcolor{yellow} \footnotesize{log(n)} & \cellcolor{green} 1 & \cellcolor{red} n \\
+        & \rotatebox{310}{Front} & \rotatebox{310}{Iterator} & \rotatebox{310}{Index} & \rotatebox{310}{Back} & & \\
+    \end{tabular}
+\end{frame}
+
+\defverbatim{\thislist}{
+\begin{lstlisting}[numbers=none]
+for (auto i = fib.rbegin(); i != fib.rend(); ++i) {
+    std::cout << i;
+}
+\end{lstlisting}}
+
+\begin{frame}[fragile]
+    \frametitle{Iterators}
+    \begin{itemize}
+        \item what happens internally in a range-based for-loop?
+        \item what if we want to traverse backwards?
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+std::vector fib {1, 1, 2, 3, 5, 8};
+for (auto i : fib) { std::cout << i; }
+
+for (auto i = fib.begin(); i != fib.end(); ++i) {
+    std::cout << i;
+}
+    \end{lstlisting}
+    \visible<2->{\thislist}
+\end{frame}
+
+\end{document}
