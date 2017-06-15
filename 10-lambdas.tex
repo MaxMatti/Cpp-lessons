@@ -1,0 +1,200 @@
+\input{definitions}
+\usepackage{colortbl}
+\usepackage{multirow}
+
+\begin{document}
+
+\title{Lambdas}
+\subtitle{Things we stole from functional programming}
+\date{\today}
+\author{Florian Warg, Max Staff}
+
+\maketitle
+
+\begin{frame}[fragile]
+    \frametitle{Functors}
+    \begin{itemize}
+        \item in C++ we can have callable objects
+        \item to do this we have to overload the function call operator
+        \item any instantiated objects of those classes are called functors
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+class AddOne {
+public:
+    int operator()(int i) { return i + 1; }
+};
+/* ... */
+AddOne myFunctor;
+std::cout << myFunctor(41);
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Closures}
+    \begin{itemize}
+        \item closures are a concept in functional programming
+        \item a closure is a function that can capture variables of its outer scope
+        \item closures have implicit identity, state and behavior
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Creating closures with functors}
+    \begin{itemize}
+        \item we can simulate closures with functors
+        \item captured variables are stored in private members
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+class Closure {
+private:
+    int val;
+    int& ref;
+public:
+    Closure(int val, int& ref) 
+        : val(val), ref(ref) {}
+    int operator()() { return val + ref; }
+};
+/* ... */
+int x = 42;
+int y = 31;
+Closure f(x, y);
+std::cout << f();
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Anonymous functions}
+    \begin{itemize}
+        \item anonymous functions originate from the lambda calculus
+        \item in lambda calculus every function is anonymous
+        \item e.g. $ \lambda x. \lambda y. \lambda z. x y z $ is an anonymous function with 3 arguments
+        \item anonymous functions are mostly used as arguments for higher order functions
+        \item they can also be used to return a function as a result
+        \item in C++ anonymous functions that represent closures are called \textbf{lambdas}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Lambdas}
+    \begin{lstlisting}[numbers=none]
+[captureList](argumentList) {functionBody}
+    \end{lstlisting}
+    \begin{lstlisting}[numbers=none]
+auto plus1 = [](int x) { return x + 1; };
+    \end{lstlisting}
+    \begin{itemize}
+        \item lambda terms create functors of an anonymous type
+        \item only \lstinline{auto} can deduce the type
+        \item the capture list can be used to capture variables of the enclosing scope by value or reference
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+int x = 42;
+int y = 1;
+// capture implicitly by value
+auto f = [=]() { return x + y; };
+// capture implicitly by reference
+auto g = [&]() { return x + y; }; 
+// capture explicitly int x and int& y
+auto h = [x, &y] { return x + y; }
+    \end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]
+    \frametitle{Higher-order functions}
+    \begin{itemize}
+        \item higher-order functions are functions that can take functions as arguments or return functions
+        \item in standard C this is done via function pointers
+        \item C++ uses templates or type erasure instead
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+struct Entry {
+    int id;
+    char name[32];
+};
+/* ... */
+vector<Entry> v = {{3, "Charlie"}, 
+                   {1, "Alice"},
+                   {2, "Bob"}};
+sort(begin(v), end(v), [](Entry& x, Entry& y) {
+    return x.id < y.id; });
+// v == {{1, "Alice"}, {2, "Bob"}, {3, "Charlie"}};
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Partial Function Application}
+    \begin{itemize}
+        \item we can bind parameters of a function and get a new function of smaller arity as a result
+        \item lambda expressions are naturally used for that
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+int f(int x, int y, int z) {
+    return x * x + 2 * y + z;
+}
+/* ... */
+auto partial = [](int z) {
+    return f(1, 9, z);
+};
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Constructing higher-order functions}
+    \begin{itemize}
+        \item functions can return lambdas because they are objects
+        \item lambdas can be used as function parameters by using templates
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+auto makeDice(int sides) {
+    return [=]() {
+        random_device r;
+        default_random_engine e(r());
+        uniform_int_distribution<int> d(1, sides);
+        return d(e);
+    };
+}
+/* ... */
+auto cube = makeDice(6);
+auto octahedron = makeDice(8);
+cout << cube() << " " << octahedron() << "\n";
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Taking lambdas as arguments}
+    \begin{itemize}
+        \item template argument deduction can find the type of any lambda
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+template<class List, class Functor>
+void forEach(List l, Functor f) {
+    for (auto i : l) {
+        f(i);
+    }
+}
+/* ... */
+vector<int> v = {1, 2, 3, 4};
+auto print = [](int i) { cout << i << ' '; };
+forEach(v, print);
+    \end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]
+    \frametitle{Generic lambdas}
+    \begin{itemize}
+        \item we can the keyword \lstinline{auto} as a parameter type to create generic lambdas
+        \item generic lambdas accept any type of arguments (as long as they are well-formed)
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+auto f = [](auto container) {
+    for (auto i : container) {
+        cout << i << " ";
+    }
+}
+/* ... */
+int a[] = {1, 2, 3, 4};
+vector<string> v = {"Lambdas", "are", "great"};
+f(a);
+f(v);
+    \end{lstlisting}
+
+\end{frame}
+\end{document}
