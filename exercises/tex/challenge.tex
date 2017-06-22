@@ -10,17 +10,9 @@
 \section*{BigInteger-Library}
 \begin{itemize}
     \item Create a class called \lstinline{BigInteger} that should represent large integer values with the following features
-    \item Create a constructor that takes a 64 bit sized integer value as input
-    \item Create a function that outputs the content of the BigInteger in one of the following formats:
-    \begin{itemize}
-        \item decimal number
-        \item hexadecimal number
-    \end{itemize}
-    \item \textbf{optional:}
-    \begin{itemize}
-        \item Create a constructor that takes a \lstinline{std::string} as input
-        \item Create a constructor that takes a custom literal as input
-    \end{itemize}
+    \item Your class should be able to store integer values of any compile-time defined size (runtime-defined size is possible but not required)
+    \item When templated, your class should either be able to deduce its template parameters or you should provide a derived template that only takes the size (in bits) as a template parameter
+    \item Any part of your program should be platform-independent C++-Code according to the C++14 or C++17 specification
 \end{itemize}
 \section*{First Stage}
 \begin{itemize}
@@ -30,23 +22,24 @@
         \item Comparison (less-than, etc)
         \item Addition, Subtraction
         \item Bit-shift
+        \item Constructor that takes a 64 bit sized integer value as input
     \end{itemize}
 \end{itemize}
 \section*{Second Stage}
 \begin{itemize}
-    \item Implement the following operations for you class:
+    \item Implement the following operations for your class:
     \begin{itemize}
         \item Multiplication
         \item Division
+        \item Modulo (remainder of division)
     \end{itemize}
 \end{itemize}
 \section*{Third Stage}
 \begin{itemize}
-    \item Implement the following operations for you class:
-    \begin{itemize}
-        \item Modulo (remainder of division)
-        \item Square-and-Multiply to calculate nth power in a residue class ring
-    \end{itemize}
+    \item Implement a square-and-multiply-based algorithm to calculate nth power in a residue class ring
+    \item Make sure your \lstinline{BigInteger} class is printable (can be appended to an \lstinline{std::ostream})
+    \item Create a constructor that takes a \lstinline{std::string} as input
+    \item Make sure your \lstinline{BigInteger} class can be constructed from a \lstinline{std::istream}
 \end{itemize}
 \section*{Evaluation Criteria}
 \begin{itemize}
