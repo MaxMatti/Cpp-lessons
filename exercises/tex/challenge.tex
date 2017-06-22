@@ -1,0 +1,76 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{a4wide}
+\usepackage{DejaVuSans}
+\usepackage{listings}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\renewcommand*\familydefault{\sfdefault} 
+\lstset{basicstyle=\ttfamily}
+\begin{document}
+\section*{BigInteger-Library}
+\begin{itemize}
+    \item Create a class called \lstinline{BigInteger} that should represent large integer values with the following features
+    \item Create a constructor that takes a \lstinline{std::size_t} as input
+    \item Create a function that outputs the content of the BigInteger in one of the following formats:
+    \begin{itemize}
+        \item decimal number
+        \item hexadecimal number
+    \end{itemize}
+    \item \textbf{optional:}
+    \begin{itemize}
+        \item Create a constructor that takes a \lstinline{std::string} as input
+        \item Create a constructor that takes a custom literal as input
+    \end{itemize}
+\end{itemize}
+\section*{First Stage}
+\begin{itemize}
+    \item Implement the following operations for your class:
+    \begin{itemize}
+        \item (In)Equality-check
+        \item Comparison (less-than, etc)
+        \item Addition, Subtraction
+        \item Bit-shift
+    \end{itemize}
+\end{itemize}
+\section*{Second Stage}
+\begin{itemize}
+    \item Implement the following operations for you class:
+    \begin{itemize}
+        \item Multiplication
+        \item Division
+    \end{itemize}
+\end{itemize}
+\section*{Third Stage}
+\begin{itemize}
+    \item Implement the following operations for you class:
+    \begin{itemize}
+        \item Modulo (remainder of division)
+        \item Square-and-Multiply to calculate nth power in a residue class ring
+    \end{itemize}
+\end{itemize}
+\section*{Evaluation Criteria}
+\begin{itemize}
+    \item Functionality:
+    \begin{itemize}
+        \item The code needs to compile and run without errors in C++14 or C++17
+        \item The code needs to provide the required functionality and follow the specifications
+    \end{itemize}
+    \item Readability:
+    \begin{itemize}
+        \item The implemented functions need to be comprehensible
+        \item The structure of the source code should be obvious and reasonable
+    \end{itemize}
+    \item Best pratices:
+    \begin{itemize}
+        \item Use known best practices for the placement and hierarchy of implemented functions
+        \item No functionality should be implemented twice or even more often
+        \item Avoid compiler warnings where possible, don't create quick workarounds for compiler warnings
+    \end{itemize}
+    \item Performance:
+    \begin{itemize}
+        \item Faster and more efficient code is preferred
+        \item This should not come with a tradeoff of readability
+        \item Real time performance as well as theoretical complexity is measured
+    \end{itemize}
+\end{itemize}
+\end{document}
