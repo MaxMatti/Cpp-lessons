@@ -1,0 +1,139 @@
+\input{definitions}
+
+\begin{document}
+
+\title{Templates}
+\subtitle{Generic Programming}
+\date{\today}
+\author{Florian Warg, Max Staff}
+
+\maketitle
+
+\begin{frame}[fragile]
+    \frametitle{Motivation}
+    \begin{itemize}
+        \item often you discover that your algorithm is generic
+        \item you want to apply it to any type that conforms to a concept
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+int min(int x, int y)
+{
+    return (x < y) ? x : y;
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Approach 1: Function Overloading}
+    \begin{lstlisting}[numbers=none]
+int min(int x, int y) { return (x < y) ? x : y; }
+char min(char x, char y) { return (x < y) ? x : y; }
+    \end{lstlisting}
+    \begin{itemize}
+        \item these are all the same
+        \item there must be an overload for every type
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Approach 2: Templates}
+    \begin{itemize}
+		\item function should be defined for every comparable type
+		\item the powerful template engine takes care of that
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+template<class T>
+T min(T x, T y) { return (x < y) ? x : y; }
+/* ... */
+auto i = min(42, 1);
+auto k = min(34.0, 23.1);
+auto l = min(make_unique<int>(2), nullptr);
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Template syntax}
+    \begin{itemize}
+         \item template parameters can be values, but also types
+         \item templates can be applied to types and functions
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+template<class T>
+T min(T x, T y);
+
+template<class T, std::size_t N>
+struct array { T data[N]; };
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Type deduction}
+    \begin{itemize}
+        \item template parameters can / must be explicitly stated
+        \item in C++14 function template parameters can also be deduced
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+auto i = min<int>(41, 1);
+auto k = min<double>(34.0, 23.1);
+auto l = min<double>(10, 0.0); // parameter needed!
+
+auto x = min(23.0f, 23.01f);
+array<int, 8> a; // parameters needed!
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Overload resolution}
+    \begin{itemize}
+        \item the compiler prefers concrete functions to generic ones
+        \item template functions can be explicitly called
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+void fn(int x) { cout << "concrete\n"; }
+
+template<class T>
+void fn(T x) { cout << "templated\n"; }
+
+fn(42); // "concrete"
+fn(10.0); // "templated"
+fn<int>(42); // "templated"
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Template Specialization}
+    \begin{itemize}
+        \item templates can be specialized
+        \item you provide a special implementation for specific parameters
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+template<class T>
+bool isInt(T t) { return false; }
+
+template<>
+bool isInt<int>(int t) { return true; }
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Template instantiation}
+    \begin{itemize}
+        \item templates can only be instantiated when their expressions are well formed
+        \item if a template cannot be instantiated, alternative templates will be considered
+        \item this is called \textbf{Substitution Failure Is Not An Error} (SFINAE)
+        \item if no template can be instantiated, a compiler error occurs
+    \end{itemize}
+    \begin{lstlisting}[numbers=none]
+template<class T>
+void call(T t) { t(); }
+
+void f() { cout << "f called!"; }
+
+call(f);
+call([](){ cout << "lambda called!"; });
+call(42); // 42() is ill formed! (Substitution failure)
+
+    \end{lstlisting}
+\end{frame}
+
+\end{document}
